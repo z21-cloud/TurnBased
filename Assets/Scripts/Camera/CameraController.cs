@@ -12,7 +12,10 @@ namespace TurnBased.PlayerView
         private Ray _ray;
         private IMouseInput _mouseInput;
         private IControllable _currentControllable;
-        
+
+        public RaycastHit CurrentHit { get; private set; }
+        public bool HasHit { get; private set; }
+
         public void Initialize(IMouseInput mouseInput)
         {
             _mouseInput = mouseInput;
@@ -21,8 +24,13 @@ namespace TurnBased.PlayerView
         private void Update()
         {
             _ray = GetRay();
-            MouseLeftClick();
-            MouseRightClick();
+
+            HasHit = Physics.Raycast(_ray, out RaycastHit hit);
+
+            if(HasHit) CurrentHit = hit;
+
+            MouseLeftClick(CurrentHit);
+            MouseRightClick(CurrentHit);
         }
 
         private Ray GetRay()
@@ -30,24 +38,21 @@ namespace TurnBased.PlayerView
             return _camera.ScreenPointToRay(_mouseInput.MousePosition);
         }
 
-        private void MouseLeftClick()
+        private void MouseLeftClick(RaycastHit hit)
         {
             if (!_mouseInput.LeftMouseButton) return;
 
-            if (Physics.Raycast(_ray, out RaycastHit hit) && hit.collider.TryGetComponent<IControllable>(out var controllable))
+            if (hit.collider.TryGetComponent<IControllable>(out var controllable))
             {
                 _currentControllable = controllable;
             }
         }
 
-        private void MouseRightClick()
+        private void MouseRightClick(RaycastHit hit)
         {
             if (!_mouseInput.RightMouseButton || _currentControllable == null) return;
 
-            if (Physics.Raycast(_ray, out RaycastHit hit))
-            {
-                _currentControllable.SetTargetPosition(hit.point);
-            }
+            _currentControllable.SetTargetPosition(hit.point);
         }
     }
 }

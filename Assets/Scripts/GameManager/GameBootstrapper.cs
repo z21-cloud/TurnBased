@@ -6,12 +6,14 @@ namespace TurnBased.GameBoot
 {
     public class GameBootstrapper : MonoBehaviour
     {
-        [SerializeField] private CameraController cameraController;
-        [SerializeField] private InputManager inputManager;
+        [SerializeField] private CameraController _cameraController;
+        [SerializeField] private InputManager _inputManager;
+        [SerializeField] private MouseVisual _cursosVisual;
 
         private void Awake()
         {
-            cameraController.Initialize(inputManager);
+            _cameraController.Initialize(_inputManager);
+            _cursosVisual.Initialize(_cameraController);
         }
     }
 }

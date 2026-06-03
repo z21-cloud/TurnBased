@@ -4,8 +4,8 @@ namespace TurnBased.Units
 {
     public class UnitMover : MonoBehaviour, IMoveable
     {
-        [SerializeField] private float speed = 5f;
-        [SerializeField] private float destinationThreshold = .1f;
+        [SerializeField] private float _speed = 5f;
+        [SerializeField] private float _destinationThreshold = .1f;
         public bool HasReached { get; private set; }
 
         private Vector3 _targetPosition;
@@ -17,10 +17,10 @@ namespace TurnBased.Units
 
         void Update()
         {
-            if(Vector3.Distance(transform.position, _targetPosition) < destinationThreshold) return;
+            if(Vector3.Distance(transform.position, _targetPosition) < _destinationThreshold) return;
 
             Vector3 moveDirection = (_targetPosition - transform.position).normalized;
-            transform.position += moveDirection * Time.deltaTime * speed; 
+            transform.position += moveDirection * Time.deltaTime * _speed; 
         }
     }
 }
