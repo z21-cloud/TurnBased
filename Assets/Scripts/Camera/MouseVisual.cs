@@ -1,22 +1,26 @@
 using TurnBased.PlayerView;
 using UnityEngine;
 
-public class MouseVisual : MonoBehaviour
+namespace TurnBased.PlayerView
 {
-    private CameraController _cameraController;
-    public void Initialize(CameraController cameraController)
+    public class MouseVisual : MonoBehaviour
     {
-        _cameraController = cameraController;
-    }
-
-    void Update()
-    {
-        if(_cameraController == null)
+        private IMouseWorldPosition _mouseWorldPosition;
+        public void Initialize(IMouseWorldPosition mouseWorldPosition)
         {
-            Debug.LogError("[MouseVisaul] Camera Controller didn't set up! Visual error!");
-            return;
-        }    
+            _mouseWorldPosition = mouseWorldPosition;
+        }
 
-        if(_cameraController.HasHit) transform.position = _cameraController.CurrentHit.point;
+        void Update()
+        {
+            if (_mouseWorldPosition == null)
+            {
+                Debug.LogError("[MouseVisaul] Camera Controller didn't set up! Visual error!");
+                return;
+            }
+
+            if (_mouseWorldPosition.HasPosition) transform.position = _mouseWorldPosition.MouseWorldPosition;
+        }
     }
 }
+

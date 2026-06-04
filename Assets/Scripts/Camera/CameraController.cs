@@ -1,20 +1,22 @@
-using System;
 using TurnBased.PlayerInput;
 using TurnBased.Units;
 using UnityEngine;
 
 namespace TurnBased.PlayerView
 {
-    public class CameraController : MonoBehaviour
+    public class CameraController : MonoBehaviour, IMouseWorldPosition
     {
+        [SerializeField] private LayerMask _mouseLayer;
         [SerializeField] private Camera _camera;
 
         private Ray _ray;
+        private RaycastHit _hit;
         private IMouseInput _mouseInput;
         private IControllable _currentControllable;
 
-        public RaycastHit CurrentHit { get; private set; }
-        public bool HasHit { get; private set; }
+        public Vector3 MouseWorldPosition { get; private set; }
+
+        public bool HasPosition { get; private set; }
 
         public void Initialize(IMouseInput mouseInput)
         {
@@ -25,12 +27,16 @@ namespace TurnBased.PlayerView
         {
             _ray = GetRay();
 
-            HasHit = Physics.Raycast(_ray, out RaycastHit hit);
+            if(Physics.Raycast(_ray, out RaycastHit hit, float.MaxValue, _mouseLayer))
+            {
+                HasPosition = true;
+                _hit = hit;       
 
-            if(HasHit) CurrentHit = hit;
+                MouseWorldPosition = _hit.point;        
+            }
 
-            MouseLeftClick(CurrentHit);
-            MouseRightClick(CurrentHit);
+            MouseLeftClick();
+            MouseRightClick();
         }
 
         private Ray GetRay()
@@ -38,21 +44,21 @@ namespace TurnBased.PlayerView
             return _camera.ScreenPointToRay(_mouseInput.MousePosition);
         }
 
-        private void MouseLeftClick(RaycastHit hit)
+        private void MouseLeftClick()
         {
             if (!_mouseInput.LeftMouseButton) return;
 
-            if (hit.collider.TryGetComponent<IControllable>(out var controllable))
+            if (_hit.collider.TryGetComponent<IControllable>(out var controllable))
             {
                 _currentControllable = controllable;
             }
         }
 
-        private void MouseRightClick(RaycastHit hit)
+        private void MouseRightClick()
         {
             if (!_mouseInput.RightMouseButton || _currentControllable == null) return;
 
-            _currentControllable.SetTargetPosition(hit.point);
+            _currentControllable.SetTargetPosition(MouseWorldPosition);
         }
     }
 }

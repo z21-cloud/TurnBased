@@ -17,10 +17,15 @@ namespace TurnBased.Units
 
         void Update()
         {
-            if(Vector3.Distance(transform.position, _targetPosition) < _destinationThreshold) return;
+            if(Vector3.Distance(transform.position, _targetPosition) < _destinationThreshold)
+            {
+                HasReached = true;
+                return;
+            }
 
             Vector3 moveDirection = (_targetPosition - transform.position).normalized;
             transform.position += moveDirection * Time.deltaTime * _speed; 
+            HasReached = false;
         }
     }
 }
