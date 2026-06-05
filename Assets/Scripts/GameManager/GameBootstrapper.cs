@@ -8,12 +8,15 @@ namespace TurnBased.GameBoot
     {
         [SerializeField] private CameraController _cameraController;
         [SerializeField] private InputManager _inputManager;
-        [SerializeField] private MouseVisual _cursosVisual;
+        [SerializeField] private MouseVisual _cursorVisual;
+        [SerializeField] private SelectionManager _selectionManager;
+        [SerializeField] private UnitActionSystem _unitActionSystem;
 
         private void Awake()
         {
-            _cameraController.Initialize(_inputManager);
-            _cursosVisual.Initialize(_cameraController);
+            _unitActionSystem.Initialize(_selectionManager);
+            _cameraController.Initialize(_inputManager, _selectionManager, _unitActionSystem);
+            _cursorVisual.Initialize(_cameraController);
         }
     }
 }

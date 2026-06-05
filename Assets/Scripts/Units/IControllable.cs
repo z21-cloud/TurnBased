@@ -2,10 +2,9 @@ using UnityEngine;
 
 namespace TurnBased.Units
 {
-    public interface IControllable
+    public interface IActionable
     {
-        public void Select();
-        public void SetTargetPosition(Vector3 position);
+        public void ExecuteMove(Vector3 position);
     }
 }
 
