@@ -1,26 +1,31 @@
 using TurnBased.Units;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class UnitActionSystem : MonoBehaviour
+namespace TurnBased.Units
 {
-    private IActionable _currentUnit;
-
-    public void Initialize(SelectionManager selectionManager)
+    public class UnitActionSystem : MonoBehaviour
     {
-        selectionManager.OnUnitSelected += OnUnitSelected;
-        selectionManager.OnUnitDeselected += OnUnitDeselected;
-    }
+        private IActionable _currentUnit;
 
-    private void OnUnitSelected(ISelectable selectable)
-    {
-        _currentUnit = selectable as IActionable;
-    }
+        public void Initialize(SelectionManager selectionManager)
+        {
+            selectionManager.OnUnitSelected += OnUnitSelected;
+            selectionManager.OnUnitDeselected += OnUnitDeselected;
+        }
 
-    private void OnUnitDeselected() => _currentUnit = null;
+        private void OnUnitSelected(ISelectable selectable)
+        {
+            _currentUnit = selectable as IActionable;
+        }
 
-    public void MoveUnit(Vector3 position)
-    {
-        _currentUnit?.ExecuteMove(position);
+        private void OnUnitDeselected()
+        {
+            _currentUnit = null;
+        }
+
+        public void MoveUnit(Vector3 position)
+        {
+            _currentUnit?.ExecuteMove(position);
+        }
     }
 }

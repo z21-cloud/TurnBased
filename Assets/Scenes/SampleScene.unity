@@ -152,7 +152,7 @@ MonoBehaviour:
   _cameraController: {fileID: 650296508}
   _inputManager: {fileID: 1822313407}
   _cursorVisual: {fileID: 832986101}
-  _selectionManager: {fileID: 584364446}
+  _selectionManager: {fileID: 584364448}
   _unitActionSystem: {fileID: 208513402}
 --- !u!4 &208513401
 Transform:
@@ -454,7 +454,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 584364447}
-  - component: {fileID: 584364446}
+  - component: {fileID: 584364448}
   m_Layer: 0
   m_Name: SelectionManager
   m_TagString: Untagged
@@ -462,18 +462,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &584364446
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 584364445}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79d4e15816e9bca44905a04477048d8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SelectionManager
 --- !u!4 &584364447
 Transform:
   m_ObjectHideFlags: 0
@@ -489,6 +477,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &584364448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 584364445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79d4e15816e9bca44905a04477048d8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SelectionManager
 --- !u!1 &644150128
 GameObject:
   m_ObjectHideFlags: 0
@@ -806,11 +806,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9131a1f1220a1f4f8791a9825d32777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MouseVisual
---- !u!95 &1046020655 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 8082737556478767196, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
-  m_PrefabInstance: {fileID: 2481265925855297320}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1334755327
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -868,40 +863,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46e18d94e2668c5479029197e6379a8e, type: 3}
---- !u!1 &1476627306 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4653663551712920801, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
-  m_PrefabInstance: {fileID: 2481265925855297320}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1476627309
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1476627306}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b3b6964ec948d747a94d5fce1ce84ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TurnBased.Units.UnitMover
-  _speed: 5
-  _rotationSpeed: 15
-  _destinationThreshold: 0.1
---- !u!114 &1476627310
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1476627306}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6928de953641ca141857b441294f6d70, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitController
-  _moverBehaviour: {fileID: 1476627309}
-  _animator: {fileID: 1046020655}
 --- !u!1001 &1732076422
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -960,53 +921,8 @@ PrefabInstance:
     - {fileID: 8663777334876518988, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4653663551712920801, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1732076426}
-    - targetCorrespondingSourceObject: {fileID: 4653663551712920801, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1732076425}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
---- !u!1 &1732076423 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4653663551712920801, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
-  m_PrefabInstance: {fileID: 1732076422}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &1732076424 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 8082737556478767196, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
-  m_PrefabInstance: {fileID: 1732076422}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1732076425
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1732076423}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b3b6964ec948d747a94d5fce1ce84ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TurnBased.Units.UnitMover
-  _speed: 5
-  _rotationSpeed: 15
-  _destinationThreshold: 0.1
---- !u!114 &1732076426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1732076423}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6928de953641ca141857b441294f6d70, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitController
-  _moverBehaviour: {fileID: 1732076425}
-  _animator: {fileID: 1732076424}
 --- !u!1 &1822313405
 GameObject:
   m_ObjectHideFlags: 0
@@ -1103,19 +1019,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3675865974682857049, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
-    - {fileID: 279870893808632444, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
-    - {fileID: 8663777334876518988, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
+    - target: {fileID: 5289938636633577382, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4653663551712920801, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1476627310}
-    - targetCorrespondingSourceObject: {fileID: 4653663551712920801, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1476627309}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0059272052f778b498ac4b52ca7f2f63, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

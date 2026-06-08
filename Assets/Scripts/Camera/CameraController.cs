@@ -17,7 +17,7 @@ namespace TurnBased.PlayerView
         private UnitActionSystem _unitActionSystem;
 
         public Vector3 MouseWorldPosition { get; private set; }
-
+        
         public bool HasPosition { get; private set; }
 
         public void Initialize(IMouseInput mouseInput, SelectionManager selectionManager, UnitActionSystem unitActionSystem)
@@ -47,7 +47,9 @@ namespace TurnBased.PlayerView
             if (Physics.Raycast(_ray, out RaycastHit unitHit, float.MaxValue, _unitLayer))
             {
                 if (unitHit.collider.TryGetComponent<ISelectable>(out var selectable))
+                {
                     _selectionManager.Select(selectable);
+                }
             }
             else
             {

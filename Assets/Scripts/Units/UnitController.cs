@@ -6,6 +6,7 @@ namespace TurnBased.Units
     {
         [SerializeField] private MonoBehaviour _moverBehaviour;
         [SerializeField] private Animator _animator;
+        [SerializeField] private UnitVisual _unitVisual;
 
         private IMoveable _mover;
 
@@ -27,12 +28,14 @@ namespace TurnBased.Units
 
         public void Select()
         {
-            Debug.Log($"[UnitController]: Unit Selected: {gameObject.name}");
+            Debug.Log($"[UnitController] {gameObject.name} - has selected");
+            _unitVisual.ShowSelection();
         }
 
         public void Deselect()
         {
-            Debug.Log($"[UnitController]: Unit Deselected: {gameObject.name}");
+            Debug.Log($"[UnitController] {gameObject.name} - has deselected");
+            _unitVisual.HideSelection();
         }
     }
 }

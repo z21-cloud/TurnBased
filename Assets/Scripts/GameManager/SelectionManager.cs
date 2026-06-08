@@ -2,36 +2,33 @@ using System;
 using TurnBased.PlayerView;
 using UnityEngine;
 
-public class SelectionManager : MonoBehaviour
+namespace TurnBased.Units
 {
-    public event Action<ISelectable> OnUnitSelected;
-    public event Action OnUnitDeselected;
-
-    private ISelectable _currentSelected;
-    private IMouseWorldPosition _mouseWorldPosition;
-
-    public void Initialize(IMouseWorldPosition mouseWorldPosition)
+    public class SelectionManager : MonoBehaviour
     {
-        _mouseWorldPosition = mouseWorldPosition;    
+        public event Action<ISelectable> OnUnitSelected;
+        public event Action OnUnitDeselected;
+
+        private ISelectable _currentSelectable;
+
+        public void Select(ISelectable selectable)
+        {
+            _currentSelectable?.Deselect();
+            _currentSelectable = selectable;
+            _currentSelectable.Select();
+
+            OnUnitSelected?.Invoke(_currentSelectable);
+        }
+
+        public void Deselect()
+        {
+            _currentSelectable?.Deselect();
+            _currentSelectable = null;
+
+            OnUnitDeselected?.Invoke();
+        }
+
+        public bool HasSelection() => _currentSelectable == null;
+        public ISelectable CurrentSelection() => _currentSelectable;
     }
-
-    public void Select(ISelectable selectable)
-    {
-        _currentSelected?.Deselect();
-        _currentSelected = selectable;
-        _currentSelected.Select();
-
-        OnUnitSelected?.Invoke(_currentSelected);
-    }
-
-    public void Deselect()
-    {
-        _currentSelected?.Deselect();
-        _currentSelected = null;
-
-        OnUnitDeselected?.Invoke();
-    }
-
-    public bool HasSelection() => _currentSelected != null;
-    public ISelectable Current => _currentSelected;
 }
