@@ -1,7 +1,10 @@
 using UnityEngine;
 
-public interface ISelectable
+namespace TurnBased.Units
 {
-    public void Select();
-    public void Deselect();
+    public interface ISelectable
+    {
+        public void Select();
+        public void Deselect();
+    }
 }

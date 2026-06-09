@@ -1,10 +1,8 @@
 using System;
-using TurnBased.PlayerView;
-using UnityEngine;
 
 namespace TurnBased.Units
 {
-    public class SelectionManager : MonoBehaviour
+    public class SelectionManager
     {
         public event Action<ISelectable> OnUnitSelected;
         public event Action OnUnitDeselected;
@@ -28,7 +26,7 @@ namespace TurnBased.Units
             OnUnitDeselected?.Invoke();
         }
 
-        public bool HasSelection() => _currentSelectable == null;
+        public bool HasSelection() => _currentSelectable != null;
         public ISelectable CurrentSelection() => _currentSelectable;
     }
 }

@@ -152,7 +152,6 @@ MonoBehaviour:
   _cameraController: {fileID: 650296508}
   _inputManager: {fileID: 1822313407}
   _cursorVisual: {fileID: 832986101}
-  _selectionManager: {fileID: 584364448}
   _unitActionSystem: {fileID: 208513402}
 --- !u!4 &208513401
 Transform:
@@ -454,7 +453,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 584364447}
-  - component: {fileID: 584364448}
   m_Layer: 0
   m_Name: SelectionManager
   m_TagString: Untagged
@@ -477,18 +475,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &584364448
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 584364445}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79d4e15816e9bca44905a04477048d8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SelectionManager
 --- !u!1 &644150128
 GameObject:
   m_ObjectHideFlags: 0
