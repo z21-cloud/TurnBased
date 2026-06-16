@@ -19,7 +19,8 @@ public class GridSystemTests
         Vector3 expectedPosition = new Vector3(6f, 0f, 4f);
 
         // 2. Act
-        Vector3 actualPosition = gridSystem.GetWorldPosition(testX, testZ);
+        GridPosition testGridPosition = new GridPosition(testX, testZ);
+        Vector3 actualPosition = gridSystem.GetWorldPosition(testGridPosition);
 
         // 3. Assert
         Assert.AreEqual(expectedPosition, actualPosition, "World position isn't correct");
@@ -38,8 +39,9 @@ public class GridSystemTests
         int testZ = -1;
 
         Vector3 expectedPosition = new Vector3(-2f, 0, -2f);
+        GridPosition testGridPosition = new GridPosition(testX, testZ);
 
-        Vector3 actualPosition = gridSystem.GetWorldPosition(testX, testZ);
+        Vector3 actualPosition = gridSystem.GetWorldPosition(testGridPosition);
 
         Assert.AreEqual(expectedPosition, actualPosition, "World position isn't correct");
     }
@@ -58,7 +60,7 @@ public class GridSystemTests
         Vector3 worldPosition = new Vector3(5.9f, 0f, 3.1f);
 
         // 2. Act
-        GridNode resultNode = gridSystem.GetGridNode(worldPosition);
+        GridPosition resultNode = gridSystem.GetGridNode(worldPosition);
 
         Assert.AreEqual(2, resultNode.X, "X needs to be rounded to 2");
         Assert.AreEqual(1, resultNode.Z, "Z needs to be rounded to 1");
