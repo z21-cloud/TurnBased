@@ -7,4 +7,3 @@ namespace TurnBased.Units
         public void ExecuteMove(Vector3 position);
     }
 }
-

@@ -1,0 +1,288 @@
+using TurnBased.PlayerInput;
+using TurnBased.Units;
+using UnityEngine;
+
+namespace TurnBased.PlayerView
+{
+    public class CameraController : MonoBehaviour, IMouseWorldPosition
+    {
+        [SerializeField] private LayerMask _groundLayer;
+        [SerializeField] private LayerMask _unitLayer;
+        [SerializeField] private Camera _camera;
+        [SerializeField] private LevelGrid _levelGrid;
+
+        private Ray _ray;
+        private RaycastHit _groundHit;
+        private IMouseInput _mouseInput;
+        private SelectionManager _selectionManager;
+        private UnitActionSystem _unitActionSystem;
+
+        public Vector3 MouseWorldPosition { get; private set; }
+        
+        public bool HasPosition { get; private set; }
+
+        public void Initialize(IMouseInput mouseInput, SelectionManager selectionManager, UnitActionSystem unitActionSystem)
+        {
+            _mouseInput = mouseInput;
+            _selectionManager = selectionManager;
+            _unitActionSystem = unitActionSystem;
+            // initialize level grid
+        }
+
+        private void Update()
+        {
+            _ray = _camera.ScreenPointToRay(_mouseInput.MousePosition);
+
+            if (Physics.Raycast(_ray, out RaycastHit groundHit, float.MaxValue, _groundLayer))
+            {
+                HasPosition = true;
+                _groundHit = groundHit;
+                MouseWorldPosition = _groundHit.point;
+            }
+
+            if (_mouseInput.LeftMouseButton) HandleLeftClick();
+            if (_mouseInput.RightMouseButton) HandleRightClick();
+        }
+
+        private void HandleLeftClick()
+        {
+            if (Physics.Raycast(_ray, out RaycastHit unitHit, float.MaxValue, _unitLayer))
+            {
+                if (unitHit.collider.TryGetComponent<ISelectable>(out var selectable))
+                {
+                    _selectionManager.Select(selectable);
+                }
+            }
+            else
+            {
+                _selectionManager.Deselect();
+            }
+        }
+
+        private void HandleRightClick()
+        {
+            if (!HasPosition) return;
+
+            Vector3 nodeCenterPosition = _levelGrid.GetPositionAtNodeCenter(_selectionManager.CurrentSelection(), MouseWorldPosition);
+
+            _unitActionSystem.MoveUnit(nodeCenterPosition);
+        }
+    }
+}
+
+using UnityEngine;
+
+namespace TurnBased.PlayerView
+{
+    public interface IMouseWorldPosition
+    {
+        public Vector3 MouseWorldPosition { get; }
+        public bool HasPosition { get; }
+    }
+}
+
+using TurnBased.Pathfinding;
+using TurnBased.Units;
+using UnityEngine;
+
+public class LevelGrid : MonoBehaviour
+{
+    [SerializeField] private int _gridHieght;
+    [SerializeField] private int _gridWidth;
+    [SerializeField] private int _cellSize;
+    [SerializeField] private Transform _debugGridObject;
+
+    private GridSystem _gridSystem;
+
+    private void Awake()
+    {
+        _gridSystem = new GridSystem(_gridHieght, _gridWidth, _cellSize);
+        _gridSystem.CreateDebugObject(_debugGridObject);
+    }
+
+    // Нерабочее говно, которое надо удалить
+    /*
+    public void SetUnitAtGridPosition(IActionable unit, GridPosition gridPosition)
+    {
+        
+    }
+
+    public IActionable GetUnitAtGridPosition(GridPosition gridPosition)
+    {
+        
+    }
+
+    public void ClearUnitAtGridPosition(GridPosition gridPosition)
+    {
+        
+    }*/
+
+    // Мои предположения как стоит переписать: 
+    // Метод проверяет находимся ли мы в гриде, конвертит world -> grid -> world (grid center)
+    public Vector3 GetPositionAtNodeCenter(ISelectable unit, Vector3 worldPosition)
+    {
+        GridPosition newGridPosition = _gridSystem.GetGridNode(worldPosition);
+        if(_gridSystem.IsValideCoords(newGridPosition))
+        {
+            GridPosition oldGridPosition = _gridSystem.GetGridNode(unit.Position);
+            if(_gridSystem.IsValideCoords(oldGridPosition))
+            {
+                GridObject oldGridObject = _gridSystem.GetGridObject(oldGridPosition);
+                oldGridObject.ClearUnit();
+            }
+
+            GridObject newGridObject = _gridSystem.GetGridObject(newGridPosition);
+            newGridObject.SetUnit(unit);
+            
+            Vector3 resultPosition = _gridSystem.GetWorldPosition(newGridPosition);
+            return resultPosition;
+        }
+
+        return Vector3.zero;
+    }
+
+    // Метод проверяет занята ли текущая нода, если занята -> возвращаем Unit'а. Если нет -> null
+    // Нужно добавить null проверку в вызывающем метода, нужно скорее всего для того, чтобы улучшить взаимодействие
+    public ISelectable GetActionableFromNode(Vector3 worldPosition)
+    {
+        GridPosition gridPosition = _gridSystem.GetGridNode(worldPosition);
+        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        ISelectable unit = gridObject.GetUnit();
+        return unit;
+    }
+
+    public void ClearNode(Vector3 worldPosition)
+    {
+        GridPosition gridPosition = _gridSystem.GetGridNode(worldPosition);
+        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        gridObject.ClearUnit();
+    }
+}
+
+using System;
+using UnityEngine;
+
+namespace TurnBased.Pathfinding
+{
+    public class GridSystem
+    {
+        private int _height;
+        private int _width;
+        private float _cellSize;
+        private GridObject[,] _nodes;
+
+        // Initializitaion;
+        public GridSystem(int height, int width, float cellSize)
+        {
+            _height = height;
+            _width = width;
+            _cellSize = cellSize;
+            _nodes = new GridObject[height, width];
+
+            for(int x = 0; x < _height; x++)
+            {
+                for(int z = 0; z < _width; z++)
+                {
+                    GridPosition gridPosition = new GridPosition(x, z);
+                    _nodes[x, z] = new GridObject(this, gridPosition);
+                }
+            }
+        }
+
+        // Grid World Position * cellSize
+        public Vector3 GetWorldPosition(GridPosition gridPosition)
+        {
+            // creates position in world * cell size to set unit bigger
+            return new Vector3(gridPosition.X, 0, gridPosition.Z) * _cellSize;
+        }
+
+        // Convert world position to grid
+        public GridPosition GetGridNode(Vector3 worldPosition)
+        {
+            return new GridPosition(
+                Mathf.FloorToInt(worldPosition.x / _cellSize),
+                Mathf.FloorToInt(worldPosition.z / _cellSize)
+            );
+        }
+
+        // Create debug objects
+        public void CreateDebugObject(Transform debugObject)
+        {
+            for(int x = 0; x < _height; x++)
+            {
+                for(int z = 0; z < _width; z++)
+                {
+                    GridPosition gridPosition = new GridPosition(x, z);
+                    Transform debugTransofrm = GameObject.Instantiate(debugObject, GetWorldPosition(gridPosition), Quaternion.identity);
+                    GridDebugObject gridDebugObject = debugTransofrm.GetComponent<GridDebugObject>();
+                    gridDebugObject.SetGridObject(GetGridObject(gridPosition));
+                }
+            }
+        }
+
+        public bool IsValideCoords(GridPosition gridPosition)
+        {
+            return
+                gridPosition.X >= 0 &&
+                gridPosition.Z >= 0 &&
+                gridPosition.X < _height &&
+                gridPosition.Z < _width;
+        }
+
+        // find object in matrix by it's coordinate
+        public GridObject GetGridObject(GridPosition gridPosition)
+        {
+            // add coords check
+
+            return _nodes[gridPosition.X, gridPosition.Z];
+        }
+    }
+}
+
+using UnityEngine;
+
+namespace TurnBased.Units
+{
+    public class UnitController : MonoBehaviour, IActionable, ISelectable
+    {
+        [SerializeField] private MonoBehaviour _moverBehaviour;
+        [SerializeField] private Animator _animator;
+        [SerializeField] private UnitVisual _unitVisual;
+
+        private IMoveable _mover;
+        private Vector3 _position;
+
+        public Vector3 Position => _position;
+
+        private void Awake()
+        {
+            _mover = (IMoveable)_moverBehaviour;
+            _position = transform.position;
+        }
+
+        private void Update()
+        {
+            if (!_mover.HasReached) _animator.SetBool("IsRunning", true);
+            else _animator.SetBool("IsRunning", false);
+        }
+
+        public void ExecuteMove(Vector3 position)
+        {
+            _position = position;
+            
+            _mover.SetDestination(position);
+        }
+
+        public void Select()
+        {
+            Debug.Log($"[UnitController] {gameObject.name} - has selected");
+            _unitVisual.ShowSelection();
+        }
+
+        public void Deselect()
+        {
+            Debug.Log($"[UnitController] {gameObject.name} - has deselected");
+            _unitVisual.HideSelection();
+        }
+    }
+}

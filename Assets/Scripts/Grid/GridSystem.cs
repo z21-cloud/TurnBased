@@ -36,8 +36,8 @@ namespace TurnBased.Pathfinding
         public GridPosition GetGridNode(Vector3 worldPosition)
         {
             return new GridPosition(
-                Mathf.FloorToInt(worldPosition.x / _cellSize),
-                Mathf.FloorToInt(worldPosition.z / _cellSize)
+                Mathf.RoundToInt(worldPosition.x / _cellSize),
+                Mathf.RoundToInt(worldPosition.z / _cellSize)
             );
         }
 

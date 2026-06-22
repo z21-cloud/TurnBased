@@ -12,5 +12,10 @@ namespace TurnBased.Pathfinding
             this.X = X;
             this.Z = Z;
         }
+
+        public override string ToString()
+        {
+            return $"X: {X}, Z: {Z}";
+        }
     }
 }
