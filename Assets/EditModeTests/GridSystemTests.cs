@@ -60,7 +60,7 @@ public class GridSystemTests
         Vector3 worldPosition = new Vector3(5.9f, 0f, 3.1f);
 
         // 2. Act
-        GridPosition resultNode = gridSystem.GetGridNode(worldPosition);
+        GridPosition resultNode = gridSystem.GetGridPosition(worldPosition);
 
         Assert.AreEqual(2, resultNode.X, "X needs to be rounded to 2");
         Assert.AreEqual(1, resultNode.Z, "Z needs to be rounded to 1");

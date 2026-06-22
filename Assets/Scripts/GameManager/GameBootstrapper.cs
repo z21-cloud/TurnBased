@@ -11,12 +11,13 @@ namespace TurnBased.GameBoot
         [SerializeField] private InputManager _inputManager;
         [SerializeField] private MouseVisual _cursorVisual;
         [SerializeField] private UnitActionSystem _unitActionSystem;
+        [SerializeField] private LevelGrid _levelGrid;
 
         private void Awake()
         {
             SelectionManager selectionManager = new SelectionManager();
             
-            _unitActionSystem.Initialize(selectionManager);
+            _unitActionSystem.Initialize(selectionManager, _levelGrid);
             _cameraController.Initialize(_inputManager, selectionManager, _unitActionSystem);
             _cursorVisual.Initialize(_cameraController);
         }

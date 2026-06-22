@@ -201,6 +201,7 @@ MonoBehaviour:
   _inputManager: {fileID: 1822313407}
   _cursorVisual: {fileID: 832986101}
   _unitActionSystem: {fileID: 208513402}
+  _levelGrid: {fileID: 136922412}
 --- !u!4 &208513401
 Transform:
   m_ObjectHideFlags: 0
@@ -687,6 +688,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _camera: {fileID: 330585545}
+  _levelGrid: {fileID: 136922412}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

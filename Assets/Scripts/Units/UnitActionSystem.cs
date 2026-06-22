@@ -5,12 +5,15 @@ namespace TurnBased.Units
 {
     public class UnitActionSystem : MonoBehaviour
     {
+        private LevelGrid _levelGrid;
         private IActionable _currentUnit;
 
-        public void Initialize(SelectionManager selectionManager)
+        public void Initialize(SelectionManager selectionManager, LevelGrid levelGrid)
         {
             selectionManager.OnUnitSelected += OnUnitSelected;
             selectionManager.OnUnitDeselected += OnUnitDeselected;
+
+            _levelGrid = levelGrid;
         }
 
         private void OnUnitSelected(ISelectable selectable)
@@ -23,9 +26,17 @@ namespace TurnBased.Units
             _currentUnit = null;
         }
 
-        public void MoveUnit(Vector3 position)
+        public void MoveUnit(Vector3 targetPosition)
         {
-            _currentUnit?.ExecuteMove(position);
+            if(_currentUnit == null) return;
+
+            Vector3 unitStartPosition = _currentUnit.WorldPosition;
+            _levelGrid.ClearSelectableAtGridPosition(unitStartPosition);
+            
+            Vector3 nodeCenter = _levelGrid.GetCenterNodePosition(targetPosition);
+            _currentUnit?.ExecuteMove(nodeCenter);
+
+            _levelGrid.SetSelectableAtGridPosition(_currentUnit, nodeCenter);
         }
     }
 }

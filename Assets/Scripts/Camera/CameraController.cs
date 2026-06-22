@@ -9,6 +9,7 @@ namespace TurnBased.PlayerView
         [SerializeField] private LayerMask _groundLayer;
         [SerializeField] private LayerMask _unitLayer;
         [SerializeField] private Camera _camera;
+        [SerializeField] private LevelGrid _levelGrid;
 
         private Ray _ray;
         private RaycastHit _groundHit;

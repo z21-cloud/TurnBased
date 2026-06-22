@@ -33,7 +33,7 @@ namespace TurnBased.Pathfinding
             return new Vector3(gridPosition.X, 0, gridPosition.Z) * _cellSize;
         }
 
-        public GridPosition GetGridNode(Vector3 worldPosition)
+        public GridPosition GetGridPosition(Vector3 worldPosition)
         {
             return new GridPosition(
                 Mathf.RoundToInt(worldPosition.x / _cellSize),

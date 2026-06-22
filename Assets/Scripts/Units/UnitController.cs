@@ -10,6 +10,8 @@ namespace TurnBased.Units
 
         private IMoveable _mover;
 
+        public Vector3 WorldPosition { get; }
+
         private void Awake()
         {
             _mover = (IMoveable)_moverBehaviour;
@@ -21,9 +23,9 @@ namespace TurnBased.Units
             else _animator.SetBool("IsRunning", false);
         }
 
-        public void ExecuteMove(Vector3 position)
+        public void ExecuteMove(Vector3 targetPosition)
         {
-            _mover.SetDestination(position);
+            _mover.SetDestination(targetPosition);
         }
 
         public void Select()
