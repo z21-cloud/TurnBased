@@ -10,7 +10,7 @@ namespace TurnBased.Units
 
         private IMoveable _mover;
 
-        public Vector3 WorldPosition { get; }
+        public Vector3 WorldPosition => transform.position;
 
         private void Awake()
         {
@@ -25,6 +25,8 @@ namespace TurnBased.Units
 
         public void ExecuteMove(Vector3 targetPosition)
         {
+            // WorldPosition = transform.position;
+
             _mover.SetDestination(targetPosition);
         }
 
