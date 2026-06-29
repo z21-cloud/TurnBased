@@ -1,156 +1,4 @@
 using TurnBased.PlayerInput;
-using TurnBased.Units;
-using UnityEngine;
-
-namespace TurnBased.PlayerView
-{
-    public class CameraController : MonoBehaviour, IMouseWorldPosition
-    {
-        [SerializeField] private LayerMask _groundLayer;
-        [SerializeField] private LayerMask _unitLayer;
-        [SerializeField] private Camera _camera;
-        [SerializeField] private LevelGrid _levelGrid;
-
-        private Ray _ray;
-        private RaycastHit _groundHit;
-        private IMouseInput _mouseInput;
-        private SelectionManager _selectionManager;
-        private UnitActionSystem _unitActionSystem;
-
-        public Vector3 MouseWorldPosition { get; private set; }
-        
-        public bool HasPosition { get; private set; }
-
-        public void Initialize(IMouseInput mouseInput, SelectionManager selectionManager, UnitActionSystem unitActionSystem)
-        {
-            _mouseInput = mouseInput;
-            _selectionManager = selectionManager;
-            _unitActionSystem = unitActionSystem;
-        }
-
-        private void Update()
-        {
-            _ray = _camera.ScreenPointToRay(_mouseInput.MousePosition);
-
-            if (Physics.Raycast(_ray, out RaycastHit groundHit, float.MaxValue, _groundLayer))
-            {
-                HasPosition = true;
-                _groundHit = groundHit;
-                MouseWorldPosition = _groundHit.point;
-            }
-
-            if (_mouseInput.LeftMouseButton) HandleLeftClick();
-            if (_mouseInput.RightMouseButton) HandleRightClick();
-        }
-
-        private void HandleLeftClick()
-        {
-            if (Physics.Raycast(_ray, out RaycastHit unitHit, float.MaxValue, _unitLayer))
-            {
-                if (unitHit.collider.TryGetComponent<ISelectable>(out var selectable))
-                {
-                    _selectionManager.Select(selectable);
-                }
-            }
-            else
-            {
-                _selectionManager.Deselect();
-            }
-        }
-
-        private void HandleRightClick()
-        {
-            if (!HasPosition) return;
-
-            _levelGrid.SetSelectableAtGridPosition(_selectionManager.CurrentSelection(), MouseWorldPosition);
-            ISelectable selectableFromGridPosition = _levelGrid.GetSelectableFromGridPosition(MouseWorldPosition);
-            
-            _unitActionSystem.MoveUnit(MouseWorldPosition);
-        }
-    }
-}
-
-using TurnBased.Units;
-using UnityEngine;
-using UnityEngine.Video;
-
-namespace TurnBased.Pathfinding
-{
-    public class GridObject
-    {
-        private GridSystem _gridSystem;    
-        private GridPosition _gridPosition;
-        private ISelectable _selectable;
-
-        public GridObject(GridSystem gridSystem, GridPosition gridPosition)
-        {
-            _gridSystem = gridSystem;
-            _gridPosition = gridPosition;
-        }
-
-        public override string ToString()
-        {
-            return _gridPosition.ToString() + "\n" + (MonoBehaviour)_selectable;
-        }
-
-        public void SetUnit(ISelectable selectable)
-        {
-            // add check if node is occupied
-
-            _selectable = selectable;
-        }
-
-        public ISelectable GetUnit()
-        {
-            // add check if node is null
-
-            return _selectable;
-        }
-
-        // clears grid object, needs when unit goes from old node to new. Clear old node
-        public void ClearGridObject()
-        {
-            _selectable = null;
-        }
-    }
-}
-
-using TurnBased.Units;
-using UnityEngine;
-
-namespace TurnBased.Units
-{
-    public class UnitActionSystem : MonoBehaviour
-    {
-        private LevelGrid _levelGrid;
-        private IActionable _currentUnit;
-
-        public void Initialize(SelectionManager selectionManager, LevelGrid levelGrid)
-        {
-            selectionManager.OnUnitSelected += OnUnitSelected;
-            selectionManager.OnUnitDeselected += OnUnitDeselected;
-
-            _levelGrid = levelGrid;
-        }
-
-        private void OnUnitSelected(ISelectable selectable)
-        {
-            _currentUnit = selectable as IActionable;
-        }
-
-        private void OnUnitDeselected()
-        {
-            _currentUnit = null;
-        }
-
-        public void MoveUnit(Vector3 position)
-        {
-            _currentUnit?.ExecuteMove(position);
-        }
-    }
-}
-
-using TurnBased.PlayerInput;
 using TurnBased.PlayerView;
 using TurnBased.Units;
 using UnityEngine;
@@ -162,71 +10,17 @@ namespace TurnBased.GameBoot
         [SerializeField] private CameraController _cameraController;
         [SerializeField] private InputManager _inputManager;
         [SerializeField] private MouseVisual _cursorVisual;
-        [SerializeField] private UnitActionSystem _unitActionSystem;
+        // [SerializeField] private UnitActionSystem _unitActionSystem;
         [SerializeField] private LevelGrid _levelGrid;
 
         private void Awake()
         {
             SelectionManager selectionManager = new SelectionManager();
+            UnitActionSystem unitActionSystem = new UnitActionSystem();
             
-            _unitActionSystem.Initialize(selectionManager, _levelGrid);
-            _cameraController.Initialize(_inputManager, selectionManager, _unitActionSystem);
+            unitActionSystem.Initialize(selectionManager, _levelGrid);
+            _cameraController.Initialize(_inputManager, selectionManager, unitActionSystem);
             _cursorVisual.Initialize(_cameraController);
-        }
-    }
-}
-
-using System;
-
-namespace TurnBased.Units
-{
-    public class SelectionManager
-    {
-        public event Action<ISelectable> OnUnitSelected;
-        public event Action OnUnitDeselected;
-
-        private ISelectable _currentSelectable;
-
-        public void Select(ISelectable selectable)
-        {
-            _currentSelectable?.Deselect();
-            _currentSelectable = selectable;
-            _currentSelectable.Select();
-
-            OnUnitSelected?.Invoke(_currentSelectable);
-        }
-
-        public void Deselect()
-        {
-            _currentSelectable?.Deselect();
-            _currentSelectable = null;
-
-            OnUnitDeselected?.Invoke();
-        }
-
-        public bool HasSelection() => _currentSelectable != null;
-        public ISelectable CurrentSelection() => _currentSelectable;
-    }
-}
-
-using UnityEngine;
-
-namespace TurnBased.Pathfinding
-{
-    public struct GridPosition
-    {
-        public int X;
-        public int Z;
-
-        public GridPosition(int X, int Z)
-        {
-            this.X = X;
-            this.Z = Z;
-        }
-
-        public override string ToString()
-        {
-            return $"X: {X}, Z: {Z}";
         }
     }
 }
@@ -295,6 +89,101 @@ namespace TurnBased.Pathfinding
     }
 }
 
+using TurnBased.Units;
+using UnityEngine;
+
+namespace TurnBased.Units
+{
+    public class UnitActionSystem
+    {
+        private LevelGrid _levelGrid;
+        private IActionable _currentUnit;
+
+        public void Initialize(SelectionManager selectionManager, LevelGrid levelGrid)
+        {
+            selectionManager.OnUnitSelected += OnUnitSelected;
+            selectionManager.OnUnitDeselected += OnUnitDeselected;
+
+            _levelGrid = levelGrid;
+        }
+
+        private void OnUnitSelected(ISelectable selectable)
+        {
+            _currentUnit = selectable as IActionable;
+        }
+
+        private void OnUnitDeselected()
+        {
+            _currentUnit = null;
+        }
+
+        public void MoveUnit(Vector3 targetPosition)
+        {
+            if(_currentUnit == null) return;
+
+            Vector3 unitStartPosition = _currentUnit.WorldPosition;
+            _levelGrid.ClearSelectableAtGridPosition(unitStartPosition);
+            
+            Vector3 nodeCenter = _levelGrid.GetCenterNodePosition(targetPosition);
+            _currentUnit?.ExecuteMove(nodeCenter);
+
+            _levelGrid.SetSelectableAtGridPosition(_currentUnit, nodeCenter);
+        }
+    }
+}
+
+using TurnBased.Units;
+using UnityEngine;
+using UnityEngine.Video;
+
+namespace TurnBased.Pathfinding
+{
+    public class GridObject
+    {
+        private GridSystem _gridSystem;    
+        private GridPosition _gridPosition;
+        private IActionable _actionable;
+
+        public GridObject(GridSystem gridSystem, GridPosition gridPosition)
+        {
+            _gridSystem = gridSystem;
+            _gridPosition = gridPosition;
+        }
+
+        public override string ToString()
+        {
+            if(_actionable == null)
+            {
+                return _gridPosition.ToString();
+            }
+            else
+            {
+                return _gridPosition.ToString() + "\n" + ((MonoBehaviour)_actionable).gameObject.name;
+            }
+        }
+
+        public void SetUnit(IActionable actionable)
+        {
+            // add check if node is occupied
+
+            _actionable = actionable;
+        }
+
+        public IActionable GetUnit()
+        {
+            // add check if node is null
+
+            return _actionable;
+        }
+
+        // clears grid object, needs when unit goes from old node to new. Clear old node
+        public void ClearGridObject()
+        {
+            _actionable = null;
+        }
+    }
+}
+
 using TurnBased.Pathfinding;
 using TurnBased.Units;
 using UnityEngine;
@@ -314,14 +203,14 @@ public class LevelGrid : MonoBehaviour
         _gridSystem.CreateDebugObject(_gridDebugTransform);
     }
 
-    public void SetSelectableAtGridPosition(ISelectable selectable, Vector3 worldPosition)
+    public void SetSelectableAtGridPosition(IActionable actionable, Vector3 worldPosition)
     {
         GridPosition gridPosition = _gridSystem.GetGridPosition(worldPosition);
         GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
-        gridObject.SetUnit(selectable);
+        gridObject.SetUnit(actionable);
     }
 
-    public ISelectable GetSelectableFromGridPosition(Vector3 worldPosition)
+    public IActionable GetSelectableFromGridPosition(Vector3 worldPosition)
     {
         GridPosition gridPosition = _gridSystem.GetGridPosition(worldPosition);
         GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
@@ -333,6 +222,12 @@ public class LevelGrid : MonoBehaviour
         GridPosition gridPosition = _gridSystem.GetGridPosition(worldPosition);
         GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
         gridObject.ClearGridObject();
+    }
+
+    public Vector3 GetCenterNodePosition(Vector3 worldPosition)
+    {
+        GridPosition gridPosition = _gridSystem.GetGridPosition(worldPosition);
+        return _gridSystem.GetWorldPosition(gridPosition);
     }
 }
 
@@ -348,9 +243,16 @@ namespace TurnBased.Units
 
         private IMoveable _mover;
 
+        public Vector3 WorldPosition => transform.position;
+
         private void Awake()
         {
             _mover = (IMoveable)_moverBehaviour;
+        }
+
+        private void Start()
+        {
+            
         }
 
         private void Update()
@@ -359,9 +261,11 @@ namespace TurnBased.Units
             else _animator.SetBool("IsRunning", false);
         }
 
-        public void ExecuteMove(Vector3 position)
+        public void ExecuteMove(Vector3 targetPosition)
         {
-            _mover.SetDestination(position);
+            // WorldPosition = transform.position;
+
+            _mover.SetDestination(targetPosition);
         }
 
         public void Select()
@@ -375,16 +279,5 @@ namespace TurnBased.Units
             Debug.Log($"[UnitController] {gameObject.name} - has deselected");
             _unitVisual.HideSelection();
         }
-    }
-}
-
-using UnityEngine;
-
-namespace TurnBased.Units
-{
-    public interface ISelectable
-    {
-        public void Select();
-        public void Deselect();
     }
 }

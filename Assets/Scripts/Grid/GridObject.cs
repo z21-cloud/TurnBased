@@ -18,7 +18,14 @@ namespace TurnBased.Pathfinding
 
         public override string ToString()
         {
-            return _gridPosition.ToString(); // + "\n" + ((MonoBehaviour)_actionable).gameObject.name;
+            if(_actionable == null)
+            {
+                return _gridPosition.ToString();
+            }
+            else
+            {
+                return _gridPosition.ToString() + "\n" + ((MonoBehaviour)_actionable).gameObject.name;
+            }
         }
 
         public void SetUnit(IActionable actionable)

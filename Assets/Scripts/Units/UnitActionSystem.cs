@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace TurnBased.Units
 {
-    public class UnitActionSystem : MonoBehaviour
+    public class UnitActionSystem
     {
         private LevelGrid _levelGrid;
         private IActionable _currentUnit;

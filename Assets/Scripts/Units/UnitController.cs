@@ -7,14 +7,21 @@ namespace TurnBased.Units
         [SerializeField] private MonoBehaviour _moverBehaviour;
         [SerializeField] private Animator _animator;
         [SerializeField] private UnitVisual _unitVisual;
+        [SerializeField] private Vector3 startPosition;
 
         private IMoveable _mover;
 
         public Vector3 WorldPosition => transform.position;
+        public Vector3 StartPosition => startPosition;
 
         private void Awake()
         {
             _mover = (IMoveable)_moverBehaviour;
+        }
+
+        public void Initialize(Vector3 position)
+        {
+            transform.position = position;
         }
 
         private void Update()

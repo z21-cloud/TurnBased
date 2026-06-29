@@ -17,6 +17,11 @@ public class LevelGrid : MonoBehaviour
         _gridSystem.CreateDebugObject(_gridDebugTransform);
     }
 
+    public void RegisterUnit(IActionable actionable, Vector3 startPosition)
+    {
+        SetSelectableAtGridPosition(actionable, startPosition);
+    }
+
     public void SetSelectableAtGridPosition(IActionable actionable, Vector3 worldPosition)
     {
         GridPosition gridPosition = _gridSystem.GetGridPosition(worldPosition);
