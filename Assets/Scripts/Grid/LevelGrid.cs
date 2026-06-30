@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TurnBased.Pathfinding;
 using TurnBased.Units;
 using UnityEngine;
@@ -47,5 +48,12 @@ public class LevelGrid : MonoBehaviour
     {
         GridPosition gridPosition = _gridSystem.GetGridPosition(worldPosition);
         return _gridSystem.GetWorldPosition(gridPosition);
+    }
+
+    public bool IsFinalCoordsOccupied(Vector3 worldPosition)
+    {
+        GridPosition gridPosition = _gridSystem.GetGridPosition(worldPosition);
+        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        return gridObject.GetUnit() != null;
     }
 }

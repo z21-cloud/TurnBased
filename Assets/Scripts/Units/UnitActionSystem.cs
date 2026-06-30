@@ -28,7 +28,7 @@ namespace TurnBased.Units
 
         public void MoveUnit(Vector3 targetPosition)
         {
-            if(_currentUnit == null) return;
+            if(_currentUnit == null || _levelGrid.IsFinalCoordsOccupied(targetPosition)) return;
 
             Vector3 unitStartPosition = _currentUnit.WorldPosition;
             _levelGrid.ClearSelectableAtGridPosition(unitStartPosition);
