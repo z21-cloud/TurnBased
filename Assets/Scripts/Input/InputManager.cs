@@ -3,19 +3,37 @@ using UnityEngine;
 
 namespace TurnBased.PlayerInput
 {
-    public class InputManager : MonoBehaviour, IMoveInput, IMouseInput
+    public class InputManager : MonoBehaviour, IMoveInput, IMouseInput, IRotationInput
     {
         public Vector2 MoveInput { get; private set; }
-
         public Vector2 MousePosition { get; private set; }
         public bool LeftMouseButton { get; private set; }
         public bool RightMouseButton { get; private set; }
 
+        public float RotationInput {get; private set; }
+
         private void Update()
         {
-            HorizontalVerticalInput();
+            HorizontalVerticalMovementInput();
+            LeftRightRotationInput();
             MouseXYInput();
             MouseClicks();
+        }
+
+        private void LeftRightRotationInput()
+        {
+            if(Input.GetKey(KeyCode.E))
+            {
+                RotationInput = 1f;
+            }
+            else if(Input.GetKey(KeyCode.Q))
+            {
+                RotationInput = -1f;
+            }
+            else
+            {
+                RotationInput = 0f;
+            }
         }
 
         private void MouseClicks()
@@ -29,7 +47,7 @@ namespace TurnBased.PlayerInput
             MousePosition = Input.mousePosition;
         }
 
-        private void HorizontalVerticalInput()
+        private void HorizontalVerticalMovementInput()
         {
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");

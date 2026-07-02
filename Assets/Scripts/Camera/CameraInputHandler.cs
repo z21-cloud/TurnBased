@@ -1,10 +1,11 @@
+using TurnBased.Pathfinding;
 using TurnBased.PlayerInput;
 using TurnBased.Units;
 using UnityEngine;
 
 namespace TurnBased.PlayerView
 {
-    public class CameraController : MonoBehaviour, IMouseWorldPosition
+    public class CameraInputHandler : MonoBehaviour, IMouseWorldPosition
     {
         [SerializeField] private LayerMask _groundLayer;
         [SerializeField] private LayerMask _unitLayer;

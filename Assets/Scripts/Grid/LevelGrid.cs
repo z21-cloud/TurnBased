@@ -3,6 +3,8 @@ using TurnBased.Pathfinding;
 using TurnBased.Units;
 using UnityEngine;
 
+namespace TurnBased.Pathfinding
+{
 public class LevelGrid : MonoBehaviour
 {
     [SerializeField] private int _height;
@@ -56,4 +58,5 @@ public class LevelGrid : MonoBehaviour
         GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
         return gridObject.GetUnit() != null;
     }
+}
 }
