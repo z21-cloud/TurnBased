@@ -196,10 +196,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f0d343160608f340a5672ee003202b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TurnBased.GameBoot.GameBootstrapper
-  _cameraController: {fileID: 650296508}
+  _cameraInputHandler: {fileID: 650296508}
+  _cameraRotation: {fileID: 1642193259}
   _cameraMovement: {fileID: 1642193258}
-  _inputManager: {fileID: 1822313407}
+  _cameraController: {fileID: 650296509}
   _cursorVisual: {fileID: 832986101}
+  _inputManager: {fileID: 1822313407}
   _levelGrid: {fileID: 136922412}
   _units:
   - {fileID: 2142593904}
@@ -638,6 +640,7 @@ GameObject:
   m_Component:
   - component: {fileID: 650296507}
   - component: {fileID: 650296508}
+  - component: {fileID: 650296509}
   m_Layer: 0
   m_Name: CameraController
   m_TagString: Untagged
@@ -682,6 +685,18 @@ MonoBehaviour:
     m_Bits: 128
   _camera: {fileID: 330585545}
   _levelGrid: {fileID: 136922412}
+--- !u!114 &650296509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 650296506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29b545ea92a984af9a002fd456074348, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameCore::TurnBased.PlayerView.CameraController
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1020,6 +1035,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1642193257}
   - component: {fileID: 1642193258}
+  - component: {fileID: 1642193259}
   m_Layer: 0
   m_Name: CameraInputHandler
   m_TagString: Untagged
@@ -1055,6 +1071,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameCore::TurnBased.PlayerInput.CameraMovement
   _moveSpeed: 5
+--- !u!114 &1642193259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642193256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e04ebafee7d64bccbd42480b1fd17a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameCore::TurnBased.PlayerView.CameraRotation
   _rotationSpeed: 100
 --- !u!1001 &1732076422
 PrefabInstance:

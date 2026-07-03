@@ -1,3 +1,10 @@
+using UnityEngine;
+
+public interface ICameraBehaviour
+{
+    public void Tick();
+}
+
 using System.Collections.Generic;
 using TurnBased.Pathfinding;
 using TurnBased.PlayerInput;
@@ -9,11 +16,11 @@ namespace TurnBased.GameBoot
 {
     public class GameBootstrapper : MonoBehaviour
     {
-        [SerializeField] private CameraInputHandler _cameraController;
+        [SerializeField] private CameraInputHandler _cameraInputHandler;
+        [SerializeField] private CameraController _cameraController;
         [SerializeField] private CameraMovement _cameraMovement;
         [SerializeField] private InputManager _inputManager;
         [SerializeField] private MouseVisual _cursorVisual;
-        // [SerializeField] private UnitActionSystem _unitActionSystem;
         [SerializeField] private LevelGrid _levelGrid;
         [SerializeField] private List<UnitController> _units;
 
@@ -23,9 +30,12 @@ namespace TurnBased.GameBoot
             UnitActionSystem unitActionSystem = new();
             
             unitActionSystem.Initialize(selectionManager, _levelGrid);
-            _cameraController.Initialize(_inputManager, selectionManager, unitActionSystem);
-            _cursorVisual.Initialize(_cameraController);
+            _cameraInputHandler.Initialize(_inputManager, selectionManager, unitActionSystem);
+            _cursorVisual.Initialize(_cameraInputHandler);
             _cameraMovement.Initialize(_inputManager, _inputManager);
+            
+            // camera controller initialize after all other stuff
+            _cameraController.Initialize(_cameraInputHandler, _cameraMovement);
 
             foreach(var unit in _units)
             {
@@ -37,82 +47,13 @@ namespace TurnBased.GameBoot
     }
 }
 
-using UnityEngine;
-
-namespace TurnBased.PlayerInput
-{
-    public interface IRotationInput
-    {
-        public float RotationInput { get; }
-    }
-}
-
-using System;
-using UnityEngine;
-
-namespace TurnBased.PlayerInput
-{
-    public class InputManager : MonoBehaviour, IMoveInput, IMouseInput, IRotationInput
-    {
-        public Vector2 MoveInput { get; private set; }
-        public Vector2 MousePosition { get; private set; }
-        public bool LeftMouseButton { get; private set; }
-        public bool RightMouseButton { get; private set; }
-
-        public float RotationInput {get; private set; }
-
-        private void Update()
-        {
-            HorizontalVerticalMovementInput();
-            LeftRightRotationInput();
-            MouseXYInput();
-            MouseClicks();
-        }
-
-        private void LeftRightRotationInput()
-        {
-            if(Input.GetKey(KeyCode.E))
-            {
-                RotationInput = 1f;
-            }
-            else if(Input.GetKey(KeyCode.Q))
-            {
-                RotationInput = -1f;
-            }
-            else
-            {
-                RotationInput = 0f;
-            }
-        }
-
-        private void MouseClicks()
-        {
-            LeftMouseButton = Input.GetMouseButton(0);
-            RightMouseButton = Input.GetMouseButton(1);
-        }
-
-        private void MouseXYInput()
-        {
-            MousePosition = Input.mousePosition;
-        }
-
-        private void HorizontalVerticalMovementInput()
-        {
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            float vertical = Input.GetAxisRaw("Vertical");
-
-            MoveInput = new Vector2(horizontal, vertical);
-        }
-    }
-}
-
 using System;
 using TurnBased.PlayerInput;
 using UnityEngine;
 
 namespace TurnBased.PlayerInput
 {
-    public class CameraMovement : MonoBehaviour
+    public class CameraMovement : MonoBehaviour, ICameraBehaviour
     {
         [SerializeField] private float _moveSpeed = 5f;
         [SerializeField] private float _rotationSpeed = 100f;
@@ -126,7 +67,7 @@ namespace TurnBased.PlayerInput
             _rotationInput = rotationInput;
         }
 
-        private void Update()
+        public void Tick()
         {
             HandleCameraMovement();
             HandleCameraRotation();
@@ -173,6 +114,34 @@ namespace TurnBased.PlayerInput
         }
     }
 }
+using TurnBased.PlayerInput;
+using UnityEngine;
+
+namespace TurnBased.PlayerView
+{
+    public class CameraController : MonoBehaviour
+    {
+        private ICameraBehaviour _cameraInputHandler;
+        private ICameraBehaviour _cameraMovement;
+        public void Initialize(ICameraBehaviour cameraInputHandler, ICameraBehaviour cameraMovement)
+        {
+            _cameraInputHandler = cameraInputHandler;
+            _cameraMovement = cameraMovement;
+        }
+
+        private void Update()
+        {
+            if(_cameraInputHandler == null || _cameraMovement == null)
+            {
+                Debug.LogError($"[CameraController]: Wrong Initialization!");
+                return;
+            }
+
+            _cameraInputHandler.Tick();
+            _cameraMovement.Tick();
+        }
+    }
+}
 
 using TurnBased.Pathfinding;
 using TurnBased.PlayerInput;
@@ -181,7 +150,7 @@ using UnityEngine;
 
 namespace TurnBased.PlayerView
 {
-    public class CameraInputHandler : MonoBehaviour, IMouseWorldPosition
+    public class CameraInputHandler : MonoBehaviour, IMouseWorldPosition, ICameraBehaviour
     {
         [SerializeField] private LayerMask _groundLayer;
         [SerializeField] private LayerMask _unitLayer;
@@ -205,7 +174,7 @@ namespace TurnBased.PlayerView
             _unitActionSystem = unitActionSystem;
         }
 
-        private void Update()
+        public void Tick()
         {
             _ray = _camera.ScreenPointToRay(_mouseInput.MousePosition);
 

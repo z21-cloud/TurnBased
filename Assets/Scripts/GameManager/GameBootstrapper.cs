@@ -9,11 +9,19 @@ namespace TurnBased.GameBoot
 {
     public class GameBootstrapper : MonoBehaviour
     {
-        [SerializeField] private CameraInputHandler _cameraController;
+        [Header("Camera Initialization")]
+        [SerializeField] private CameraInputHandler _cameraInputHandler;
+        [SerializeField] private CameraRotation _cameraRotation;
         [SerializeField] private CameraMovement _cameraMovement;
-        [SerializeField] private InputManager _inputManager;
+        [SerializeField] private CameraController _cameraController;
+        
+        [Header("Cursos Initialization")]
         [SerializeField] private MouseVisual _cursorVisual;
-        // [SerializeField] private UnitActionSystem _unitActionSystem;
+        
+        [Header("Input Initialization")]
+        [SerializeField] private InputManager _inputManager;
+        
+        [Header("Grid Initialization")]
         [SerializeField] private LevelGrid _levelGrid;
         [SerializeField] private List<UnitController> _units;
 
@@ -21,18 +29,27 @@ namespace TurnBased.GameBoot
         {
             SelectionManager selectionManager = new();
             UnitActionSystem unitActionSystem = new();
-            
-            unitActionSystem.Initialize(selectionManager, _levelGrid);
-            _cameraController.Initialize(_inputManager, selectionManager, unitActionSystem);
-            _cursorVisual.Initialize(_cameraController);
-            _cameraMovement.Initialize(_inputManager, _inputManager);
 
-            foreach(var unit in _units)
+            unitActionSystem.Initialize(selectionManager, _levelGrid);
+
+            HandleCameraInitialization(selectionManager, unitActionSystem);
+
+            foreach (var unit in _units)
             {
                 unit.Initialize(_levelGrid.GetCenterNodePosition(unit.StartPosition));
 
                 _levelGrid.RegisterUnit(unit, unit.WorldPosition);
             }
+        }
+
+        private void HandleCameraInitialization(SelectionManager selectionManager, UnitActionSystem unitActionSystem)
+        {
+            _cursorVisual.Initialize(_cameraInputHandler);
+            _cameraInputHandler.Initialize(_inputManager, selectionManager, unitActionSystem);
+            _cameraMovement.Initialize(_inputManager);
+            _cameraRotation.Initialize(_inputManager);
+            // camera controller initialize after all other stuff
+            _cameraController.Initialize(_cameraInputHandler, _cameraMovement, _cameraRotation);
         }
     }
 }

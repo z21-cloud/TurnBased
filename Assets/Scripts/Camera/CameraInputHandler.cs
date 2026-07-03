@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace TurnBased.PlayerView
 {
-    public class CameraInputHandler : MonoBehaviour, IMouseWorldPosition
+    public class CameraInputHandler : MonoBehaviour, IMouseWorldPosition, ICameraBehaviour
     {
         [SerializeField] private LayerMask _groundLayer;
         [SerializeField] private LayerMask _unitLayer;
@@ -29,7 +29,7 @@ namespace TurnBased.PlayerView
             _unitActionSystem = unitActionSystem;
         }
 
-        private void Update()
+        public void Tick()
         {
             _ray = _camera.ScreenPointToRay(_mouseInput.MousePosition);
 
