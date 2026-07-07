@@ -3,12 +3,13 @@ using UnityEngine;
 
 namespace TurnBased.PlayerInput
 {
-    public class InputManager : MonoBehaviour, IMoveInput, IMouseInput, IRotationInput
+    public class InputManager : MonoBehaviour, IMoveInput, IMouseInput, IRotationInput, IMouseWheelInput
     {
         public Vector2 MoveInput { get; private set; }
         public Vector2 MousePosition { get; private set; }
         public bool LeftMouseButton { get; private set; }
         public bool RightMouseButton { get; private set; }
+        public Vector2 MouseZoomInput {get; private set;}
 
         public float RotationInput {get; private set; }
 
@@ -18,6 +19,12 @@ namespace TurnBased.PlayerInput
             LeftRightRotationInput();
             MouseXYInput();
             MouseClicks();
+            MouseWheel();
+        }
+
+        private void MouseWheel()
+        {
+            MouseZoomInput = Input.mouseScrollDelta;
         }
 
         private void LeftRightRotationInput()

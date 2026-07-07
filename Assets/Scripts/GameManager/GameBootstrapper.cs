@@ -14,6 +14,7 @@ namespace TurnBased.GameBoot
         [SerializeField] private CameraRotation _cameraRotation;
         [SerializeField] private CameraMovement _cameraMovement;
         [SerializeField] private CameraController _cameraController;
+        [SerializeField] private CameraZoom _cameraZoom;
         
         [Header("Cursos Initialization")]
         [SerializeField] private MouseVisual _cursorVisual;
@@ -48,8 +49,9 @@ namespace TurnBased.GameBoot
             _cameraInputHandler.Initialize(_inputManager, selectionManager, unitActionSystem);
             _cameraMovement.Initialize(_inputManager);
             _cameraRotation.Initialize(_inputManager);
+            _cameraZoom.Initialize(_inputManager);
             // camera controller initialize after all other stuff
-            _cameraController.Initialize(_cameraInputHandler, _cameraMovement, _cameraRotation);
+            _cameraController.Initialize(_cameraInputHandler, _cameraMovement, _cameraRotation, _cameraZoom);
         }
     }
 }

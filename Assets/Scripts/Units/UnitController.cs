@@ -32,8 +32,6 @@ namespace TurnBased.Units
 
         public void ExecuteMove(Vector3 targetPosition)
         {
-            // WorldPosition = transform.position;
-
             _mover.SetDestination(targetPosition);
         }
 
